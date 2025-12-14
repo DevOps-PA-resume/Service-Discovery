@@ -1,0 +1,16 @@
+[Unit]
+Description=Example systemd service.
+
+[Service]
+Type=simple
+ExecStartPre=-/usr/bin/docker stop consul-server
+ExecStartPre=-/usr/bin/docker rm consul-server
+ExecStart=/usr/bin/docker run --name consul-server \
+  -p 8500:8500 \
+  -p 8600:8600/udp \
+  hashicorp/consul:latest \
+  agent -server -dev -client=0.0.0.0
+ExecStop=/usr/bin/docker stop consul-server
+
+[Install]
+WantedBy=multi-user.target
