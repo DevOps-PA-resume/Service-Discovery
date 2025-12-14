@@ -1,0 +1,25 @@
+- name: Initialize npm and install consul library
+  npm:
+    path: /home/pad/delivery/devops/Service-Discovery/roles/services/files/
+    name: consul
+    state: present
+
+- name: Create dummy services systemd files
+  template:
+    src: templates/dummy-service.service.j2
+    dest: "/etc/systemd/system/{{ item.name }}.service"
+  with_items:
+    - { name: 'service-a', port: 3001 }
+    - { name: 'service-b', port: 3002 }
+    - { name: 'service-c', port: 3003 }
+
+- name: Reload systemd and start dummy services
+  systemd:
+    name: "{{ item.name }}"
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  with_items:
+    - { name: 'service-a' }
+    - { name: 'service-b' }
+    - { name: 'service-c' }

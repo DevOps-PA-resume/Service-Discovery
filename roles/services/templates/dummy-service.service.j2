@@ -1,0 +1,15 @@
+[Unit]
+Description=Dummy Service {{ item.name }}
+After=network.target consul.service
+
+[Service]
+Type=simple
+# We pass the name and port as Environment Variables
+Environment=SERVICE_NAME={{ item.name }}
+Environment=PORT={{ item.port }}
+# Adjust this path to where your JS file is located
+ExecStart=/usr/bin/node /home/pad/delivery/devops/Service-Discovery/roles/services/files/service.js
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
